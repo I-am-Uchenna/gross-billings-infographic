@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis of Declining Top-Line Billings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#073B4C] mb-2">The Billings Story: A Deep Dive into Our Revenue Decline</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">An interactive analysis revealing that our challenge isn't pricing or efficiency it's capacity. This is our strategic path to recovery.</p>
+        </header>
+
+        <main class="space-y-12">
+
+            <section id="overview" class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-[#118AB2] mb-4">The Big Picture: A 17.19% Drop in Gross Billings</h2>
+                <p class="mb-6 text-gray-700">Our top-line revenue saw a significant downturn from FY 2020/21 to FY 2021/22. The chart below illustrates the month-by-month trend, highlighting a consistent and concerning gap in performance in the latter year. This decline represents a significant financial impact.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">FY 2020/2021 Total Billings</p>
+                        <p class="text-2xl font-bold text-[#073B4C]">$3,489,901.19</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">FY 2021/2022 Total Billings</p>
+                        <p class="text-2xl font-bold text-[#FF6B6B]">$2,889,822.88</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">Year-over-Year Change</p>
+                        <p class="text-2xl font-bold text-[#FF6B6B]">-17.19%</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">Total Patient Visits (FY21/22)</p>
+                        <p class="text-2xl font-bold text-[#118AB2]" id="totalVisitsFY2022"></p>
+                        <p class="text-xs text-gray-500" id="totalVisitsFY2021"></p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">Total GP Hours (FY21/22)</p>
+                        <p class="text-2xl font-bold text-[#06D6A0]" id="totalHoursFY2022Top"></p>
+                        <p class="text-xs text-gray-500" id="totalHoursFY2021Top"></p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">Net GP Count Change</p>
+                        <p class="text-2xl font-bold text-[#FFD166]" id="netGPCountChange"></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="grossBillingsChart"></canvas>
+                </div>
+            </section>
+            
+            <section id="kpi-analysis" class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-[#118AB2] mb-4">Isolating the Cause: Key Performance Indicators Remain Strong</h2>
+                <p class="mb-6 text-gray-700">Despite the overall revenue decline, our core operational efficiency and pricing metrics have not deteriorated. Billings per hour, visits per hour, and fee per patient have remained stable or even slightly improved. This stability strongly suggests the problem lies not in how we work, but in how much we can work. The average annual KPIs below highlight this consistency, showing that our underlying productivity and pricing power are intact.</p>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">Avg. Billings/Hour (FY21/22)</p>
+                        <p class="text-2xl font-bold text-[#118AB2]">$233.97</p>
+                        <p class="text-xs text-gray-500">vs. $205.74 (FY20/21)</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">Avg. Visits/Hour (FY21/22)</p>
+                        <p class="text-2xl font-bold text-[#06D6A0]">8.89</p>
+                        <p class="text-xs text-gray-500">vs. 8.35 (FY20/21)</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">Avg. Fee/Patient (FY21/22)</p>
+                        <p class="text-2xl font-bold text-[#FFD166]">$26.17</p>
+                        <p class="text-xs text-gray-500">vs. $24.55 (FY20/21)</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">Avg. Billings/GP (FY21/22)</p>
+                        <p class="text-2xl font-bold text-[#118AB2]" id="avgBillingsPerGP2022"></p>
+                        <p class="text-xs text-gray-500" id="avgBillingsPerGP2021"></p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">Avg. Visits/GP (FY21/22)</p>
+                        <p class="text-2xl font-bold text-[#06D6A0]" id="avgVisitsPerGP2022"></p>
+                        <p class="text-xs text-gray-500" id="avgVisitsPerGP2021"></p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="kpiChart"></canvas>
+                </div>
+            </section>
+
+            <section id="capacity-deep-dive" class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-[#118AB2] mb-4">The Core Issue: A Net Loss of GP Capacity</h2>
+                 <p class="mb-6 text-gray-700">The central driver of our billing decline is a net loss of available GP hours. While we onboarded new GPs, their capacity did not offset the significant hours lost from departing practitioners. The following charts break down our total hours and GP workforce status, clearly visualizing the gap created by GP attrition. This capacity shortfall is the true story behind our revenue challenge, directly impacting our ability to serve patients and generate revenue.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-6">
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">FY 2020/2021 Total GP Hours</p>
+                        <p class="text-2xl font-bold text-[#073B4C]" id="totalHoursFY2021"></p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                        <p class="text-sm text-gray-600">FY 2021/2022 Total GP Hours</p>
+                        <p class="text-2xl font-bold text-[#FF6B6B]" id="totalHoursFY2022"></p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container h-96 md:h-[450px]">
+                        <canvas id="capacityChangeChart"></canvas>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-red-100 border-l-4 border-[#FF6B6B] rounded-r-lg">
+                            <h3 class="font-bold text-xl text-[#FF6B6B]">Hours Lost to Attrition</h3>
+                            <p class="text-3xl font-bold text-gray-800" id="hoursLost"></p>
+                            <p class="text-gray-600">Total productive hours from GPs who were active in FY 20/21 but not in FY 21/22.</p>
+                        </div>
+                         <div class="p-4 bg-green-100 border-l-4 border-[#06D6A0] rounded-r-lg">
+                            <h3 class="font-bold text-xl text-[#06D6A0]">Hours Gained from New Hires</h3>
+                            <p class="text-3xl font-bold text-gray-800" id="hoursGained"></p>
+                            <p class="text-gray-600">Total hours contributed by new GPs who started in FY 21/22.</p>
+                        </div>
+                         <div class="p-4 bg-blue-100 border-l-4 border-[#118AB2] rounded-r-lg">
+                            <h3 class="font-bold text-xl text-[#118AB2]">Net Capacity Change</h3>
+                            <p class="text-3xl font-bold text-gray-800" id="netChange"></p>
+                            <p class="text-gray-600">The resulting deficit in available hours that directly impacted our billing potential.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h3 class="text-2xl font-bold text-[#073B4C] mb-4 text-center">GP Workforce Status Breakdown</h3>
+                    <p class="mb-6 text-gray-700 text-center max-w-2xl mx-auto">Understanding the composition of our GP workforce reveals the impact of attrition and recruitment efforts. While new GPs were onboarded, their collective hours did not fully compensate for those lost, leading to a critical capacity deficit.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                            <p class="text-sm text-gray-600">Total GPs (FY 2020/2021)</p>
+                            <p class="text-2xl font-bold text-[#073B4C]" id="totalGPsFY2021"></p>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                            <p class="text-sm text-gray-600">Total GPs (FY 2021/2022)</p>
+                            <p class="text-2xl font-bold text-[#118AB2]" id="totalGPsFY2022"></p>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg text-center shadow-sm">
+                            <p class="text-sm text-gray-600">GP Attrition Rate</p>
+                            <p class="text-2xl font-bold text-[#FF6B6B]" id="gpAttritionRate"></p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="chart-container h-80 md:h-96">
+                            <canvas id="gpStatusDonutChart"></canvas>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                <p class="text-sm text-gray-600">GPs with Attrition (FY20/21 to FY21/22)</p>
+                                <p class="text-2xl font-bold text-[#FF6B6B]" id="gpAttritionCount"></p>
+                            </div>
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                <p class="text-sm text-gray-600">New GPs Onboarded (FY21/22)</p>
+                                <p class="text-2xl font-bold text-[#06D6A0]" id="gpOnboardCount"></p>
+                            </div>
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                <p class="text-sm text-gray-600">Consistently Active GPs</p>
+                                <p class="text-2xl font-bold text-[#118AB2]" id="gpActiveCount"></p>
+                            </div>
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                <p class="text-sm text-gray-600">Other/Sporadic Activity GPs</p>
+                                <p class="text-2xl font-bold text-[#FFD166]" id="gpOtherCount"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="action-plan" class="bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-[#118AB2] mb-6 text-center">Our Strategic Path to Recovery</h2>
+                 <p class="mb-8 text-gray-700 max-w-3xl mx-auto text-center">To reverse the trend, we must focus on rebuilding our core capacity. Our action plan is a multi-pronged strategy focused on retention, recruitment, and optimizing the resources we currently have.</p>
+                <div class="relative w-full max-w-4xl mx-auto">
+                    <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-[#118AB2] opacity-30 hidden md:block"></div>
+                    <div class="space-y-10">
+                        <div class="md:grid md:grid-cols-2 md:gap-8 items-center relative">
+                            <div class="flex justify-center md:justify-end md:pr-8">
+                                <div class="w-16 h-16 bg-[#FF6B6B] rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-md">1</div>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-lg shadow-md mt-4 md:mt-0">
+                                <h3 class="text-xl font-bold text-[#073B4C] mb-2">Address GP Attrition & Enhance Retention</h3>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Conduct structured exit interviews to understand root causes.</li>
+                                    <li>Implement regular GP satisfaction and engagement surveys.</li>
+                                    <li>Develop competitive retention packages (compensation, flexibility).</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="md:grid md:grid-cols-2 md:gap-8 items-center relative">
+                             <div class="bg-gray-50 p-6 rounded-lg shadow-md mt-4 md:mt-0 md:col-start-1 md:row-start-1">
+                                <h3 class="text-xl font-bold text-[#073B4C] mb-2">Accelerate & Optimize GP Recruitment</h3>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Launch aggressive, targeted recruitment campaigns.</li>
+                                    <li>Streamline the onboarding process for faster productivity.</li>
+                                    <li>Explore flexible staffing models (locums, part-time roles).</li>
+                                </ul>
+                            </div>
+                            <div class="flex justify-center md:justify-start md:pl-8 mt-4 md:mt-0">
+                                <div class="w-16 h-16 bg-[#FFD166] rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-md">2</div>
+                            </div>
+                           
+                        </div>
+
+                        <div class="md:grid md:grid-cols-2 md:gap-8 items-center relative">
+                            <div class="flex justify-center md:justify-end md:pr-8">
+                                 <div class="w-16 h-16 bg-[#06D6A0] rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-md">3</div>
+                            </div>
+                             <div class="bg-gray-50 p-6 rounded-lg shadow-md mt-4 md:mt-0">
+                                <h3 class="text-xl font-bold text-[#073B4C] mb-2">Optimize Existing GP Utilization</h3>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>Review and improve patient scheduling to minimize gaps.</li>
+                                    <li>Analyze and promote higher-value services.</li>
+                                    <li>Investigate and address individual GP productivity dips.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+        
+        <footer class="text-center mt-12 pt-8 border-t border-gray-200">
+            <p class="text-gray-500">Infographic created by Uchenna Ejike based on the Gross Billings Analysis Report of a client.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const chartColors = {
+            blue: '#118AB2',
+            green: '#06D6A0',
+            yellow: '#FFD166',
+            red: '#FF6B6B',
+            darkBlue: '#073B4C',
+            gray: '#A9A9A9'
+        };
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+              return label.join(' ');
+            } else {
+              return label;
+            }
+        };
+        
+        const defaultChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: chartColors.darkBlue,
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    },
+                    backgroundColor: 'rgba(7, 59, 76, 0.9)',
+                    titleFont: { size: 16 },
+                    bodyFont: { size: 14 },
+                    padding: 12,
+                    cornerRadius: 6,
+                    boxPadding: 4,
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: chartColors.darkBlue,
+                         font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: chartColors.darkBlue,
+                        font: {
+                            size: 12
+                        },
+                        callback: function(value) {
+                           return '$' + new Intl.NumberFormat('en-US').format(value);
+                        }
+                    },
+                     grid: {
+                        color: '#e0e0e0'
+                    }
+                }
+            }
+        };
+
+        const data = {
+            "total_billings": {
+                "fy2021": 3489901.19,
+                "fy2022": 2889822.88,
+                "percentage_drop": -17.19
+            },
+            "avg_kpis": {
+                "fy2021": {
+                    "Gross Billings/Hour": 205.74,
+                    "Visits/Hour": 8.35,
+                    "Fee/Patient": 24.55
+                },
+                "fy2022": {
+                    "Gross Billings/Hour": 233.97,
+                    "Visits/Hour": 8.89,
+                    "Fee/Patient": 26.17
+                }
+            },
+            "monthly_kpis": [
+                {"FiscalYear": "2020/2021", "Month": "Jul", "Gross Billing": 344793.85, "Hours": 1686.99, "Visits": 13596.15, "Gross Billings/Hour": 204.38, "Visits/Hour": 8.06, "Fee/Patient": 25.36},
+                {"FiscalYear": "2020/2021", "Month": "Aug", "Gross Billing": 328004.81, "Hours": 1604.28, "Visits": 13076.91, "Gross Billings/Hour": 204.45, "Visits/Hour": 8.15, "Fee/Patient": 25.08},
+                {"FiscalYear": "2020/2021", "Month": "Sep", "Gross Billing": 328224.96, "Hours": 1599.98, "Visits": 12891.75, "Gross Billings/Hour": 205.15, "Visits/Hour": 8.06, "Fee/Patient": 25.46},
+                {"FiscalYear": "2020/2021", "Month": "Oct", "Gross Billing": 292881.08, "Hours": 1494.61, "Visits": 12433.92, "Gross Billings/Hour": 195.96, "Visits/Hour": 8.32, "Fee/Patient": 23.55},
+                {"FiscalYear": "2020/2021", "Month": "Nov", "Gross Billing": 293144.59, "Hours": 1500.56, "Visits": 12285.54, "Gross Billings/Hour": 195.35, "Visits/Hour": 8.19, "Fee/Patient": 23.86},
+                {"FiscalYear": "2020/2021", "Month": "Dec", "Gross Billing": 240899.97, "Hours": 1279.79, "Visits": 10452.34, "Gross Billings/Hour": 188.24, "Visits/Hour": 8.17, "Fee/Patient": 23.05},
+                {"FiscalYear": "2020/2021", "Month": "Jan", "Gross Billing": 274092.83, "Hours": 1319.26, "Visits": 10839.88, "Gross Billings/Hour": 207.76, "Visits/Hour": 8.22, "Fee/Patient": 25.28},
+                {"FiscalYear": "2020/2021", "Month": "Feb", "Gross Billing": 259695.14, "Hours": 1205.51, "Visits": 10077.53, "Gross Billings/Hour": 215.42, "Visits/Hour": 8.36, "Fee/Patient": 25.77},
+                {"FiscalYear": "2020/2021", "Month": "Mar", "Gross Billing": 277636.85, "Hours": 1297.80, "Visits": 11099.99, "Gross Billings/Hour": 213.93, "Visits/Hour": 8.55, "Fee/Patient": 25.01},
+                {"FiscalYear": "2020/2021", "Month": "Apr", "Gross Billing": 250361.35, "Hours": 1198.54, "Visits": 10499.73, "Gross Billings/Hour": 208.89, "Visits/Hour": 8.76, "Fee/Patient": 23.84},
+                {"FiscalYear": "2020/2021", "Month": "May", "Gross Billing": 272186.13, "Hours": 1269.45, "Visits": 11210.02, "Gross Billings/Hour": 214.41, "Visits/Hour": 8.83, "Fee/Patient": 24.28},
+                {"FiscalYear": "2020/2021", "Month": "Jun", "Gross Billing": 247076.59, "Hours": 1197.88, "Visits": 10245.89, "Gross Billings/Hour": 206.27, "Visits/Hour": 8.55, "Fee/Patient": 24.11},
+                {"FiscalYear": "2021/2022", "Month": "Jul", "Gross Billing": 293375.31, "Hours": 1295.40, "Visits": 11626.86, "Gross Billings/Hour": 226.48, "Visits/Hour": 8.98, "Fee/Patient": 25.23},
+                {"FiscalYear": "2021/2022", "Month": "Aug", "Gross Billing": 294715.11, "Hours": 1270.80, "Visits": 11466.81, "Gross Billings/Hour": 231.92, "Visits/Hour": 9.02, "Fee/Patient": 25.70},
+                {"FiscalYear": "2021/2022", "Month": "Sep", "Gross Billing": 285496.06, "Hours": 1218.45, "Visits": 10980.72, "Gross Billings/Hour": 234.31, "Visits/Hour": 9.01, "Fee/Patient": 26.00},
+                {"FiscalYear": "2021/2022", "Month": "Oct", "Gross Billing": 274797.10, "Hours": 1184.22, "Visits": 10582.02, "Gross Billings/Hour": 232.05, "Visits/Hour": 8.94, "Fee/Patient": 25.97},
+                {"FiscalYear": "2021/2022", "Month": "Nov", "Gross Billing": 275066.39, "Hours": 1177.34, "Visits": 10452.39, "Gross Billings/Hour": 233.63, "Visits/Hour": 8.88, "Fee/Patient": 26.32},
+                {"FiscalYear": "2021/2022", "Month": "Dec", "Gross Billing": 232014.52, "Hours": 990.28, "Visits": 8704.51, "Gross Billings/Hour": 234.29, "Visits/Hour": 8.79, "Fee/Patient": 26.65},
+                {"FiscalYear": "2021/2022", "Month": "Jan", "Gross Billing": 245089.04, "Hours": 1007.82, "Visits": 9109.91, "Gross Billings/Hour": 243.19, "Visits/Hour": 9.04, "Fee/Patient": 26.90},
+                {"FiscalYear": "2021/2022", "Month": "Feb", "Gross Billing": 209088.08, "Hours": 876.51, "Visits": 7729.83, "Gross Billings/Hour": 238.54, "Visits/Hour": 8.82, "Fee/Patient": 27.05},
+                {"FiscalYear": "2021/2022", "Month": "Mar", "Gross Billing": 235122.09, "Hours": 1002.50, "Visits": 8871.03, "Gross Billings/Hour": 234.54, "Visits/Hour": 8.85, "Fee/Patient": 26.50},
+                {"FiscalYear": "2021/2022", "Month": "Apr", "Gross Billing": 202008.06, "Hours": 869.21, "Visits": 7684.53, "Gross Billings/Hour": 232.40, "Visits/Hour": 8.84, "Fee/Patient": 26.29},
+                {"FiscalYear": "2021/2022", "Month": "May", "Gross Billing": 227125.04, "Hours": 968.10, "Visits": 8535.24, "Gross Billings/Hour": 234.61, "Visits/Hour": 8.82, "Fee/Patient": 26.61},
+                {"FiscalYear": "2021/2022", "Month": "Jun", "Gross Billing": 216766.08, "Hours": 908.76, "Visits": 8035.25, "Gross Billings/Hour": 238.53, "Visits/Hour": 8.84, "Fee/Patient": 26.98}
+            ],
+            "yearly_kpis": [
+                {
+                  "FiscalYear": "2020/2021",
+                  "Gross Billing": 3489901.19,
+                  "Hours": 15354.26,
+                  "Visits": 138600.67,
+                  "Gross Billings/Hour": 227.29,
+                  "Visits/Hour": 9.02,
+                  "Fee/Patient": 25.18
+                },
+                {
+                  "FiscalYear": "2021/2022",
+                  "Gross Billing": 2889822.88,
+                  "Hours": 12849.43,
+                  "Visits": 114704.14,
+                  "Gross Billings/Hour": 224.90,
+                  "Visits/Hour": 8.93,
+                  "Fee/Patient": 25.19
+                }
+            ],
+            "capacity_change": {
+                "hours_lost_attrition": 4793.8,
+                "hours_gained_onboard": 4031.5,
+                "active_hours_fy1": 13660.85,
+                "active_hours_fy2": 9639.89
+            },
+            "gp_status_summary": {
+                "attrition": 9,
+                "new_onboard": 10,
+                "consistently_active": 45,
+                "other_sporadic": 15
+            }
+        };
+
+        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        // Sort monthly data by the new month order
+        const sorted_monthly_kpis = data.monthly_kpis.sort((a, b) => {
+            const monthA = a.Month.substring(0, 3); // Take first 3 characters for comparison
+            const monthB = b.Month.substring(0, 3); // Take first 3 characters for comparison
+            return monthOrder.indexOf(monthA) - monthOrder.indexOf(monthB);
+        });
+
+        const fy1_data = sorted_monthly_kpis.filter(d => d.FiscalYear === "2020/2021");
+        const fy2_data = sorted_monthly_kpis.filter(d => d.FiscalYear === "2021/2022");
+        const months = monthOrder; // Use the predefined month order for labels
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new Chart(document.getElementById('grossBillingsChart'), {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'FY 2020/2021 Gross Billings',
+                            data: fy1_data.map(d => d['Gross Billing']),
+                            borderColor: chartColors.blue,
+                            backgroundColor: chartColors.blue + '33',
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'FY 2021/2022 Gross Billings',
+                            data: fy2_data.map(d => d['Gross Billing']),
+                            borderColor: chartColors.red,
+                            backgroundColor: chartColors.red + '33',
+                            fill: false,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: defaultChartOptions
+            });
+
+            const kpiOptions = JSON.parse(JSON.stringify(defaultChartOptions));
+            kpiOptions.scales.y = {
+                ...kpiOptions.scales.y,
+                beginAtZero: false,
+                ticks: {
+                     ...kpiOptions.scales.y.ticks,
+                     callback: function(value) { return value; }
+                }
+            };
+            
+            new Chart(document.getElementById('kpiChart'), {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                         {
+                            label: 'Billings/Hour (FY 21/22)',
+                            data: fy2_data.map(d => d['Gross Billings/Hour']),
+                            borderColor: chartColors.blue,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.1
+                        },
+                         {
+                            label: 'Visits/Hour (FY 21/22)',
+                            data: fy2_data.map(d => d['Visits/Hour']),
+                            borderColor: chartColors.green,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Fee/Patient (FY 21/22)',
+                            data: fy2_data.map(d => d['Fee/Patient']),
+                            borderColor: chartColors.yellow,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: kpiOptions
+            });
+
+            const capacityOptions = JSON.parse(JSON.stringify(defaultChartOptions));
+            capacityOptions.scales.x = { ...capacityOptions.scales.x, stacked: true };
+            capacityOptions.scales.y = {
+                ...capacityOptions.scales.y,
+                stacked: true,
+                ticks: {
+                    ...capacityOptions.scales.y.ticks,
+                    callback: function(value) {
+                       return new Intl.NumberFormat('en-US').format(value) + ' hrs';
+                    }
+                }
+            };
+            
+            new Chart(document.getElementById('capacityChangeChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['FY 2020/2021', 'FY 2021/2022'],
+                    datasets: [
+                        {
+                            label: 'Consistently Active GP Hours',
+                            data: [data.capacity_change.active_hours_fy1, data.capacity_change.active_hours_fy2],
+                            backgroundColor: chartColors.blue,
+                        },
+                        {
+                            label: 'Hours Lost to Attrition',
+                            data: [data.capacity_change.hours_lost_attrition, 0],
+                            backgroundColor: chartColors.red,
+                        },
+                        {
+                            label: 'Hours Gained from New Hires',
+                            data: [0, data.capacity_change.hours_gained_onboard],
+                            backgroundColor: chartColors.green,
+                        }
+                    ]
+                },
+                options: capacityOptions
+            });
+            
+            const hoursLostEl = document.getElementById('hoursLost');
+            const hoursGainedEl = document.getElementById('hoursGained');
+            const netChangeEl = document.getElementById('netChange');
+
+            const netChange = data.capacity_change.hours_gained_onboard - data.capacity_change.hours_lost_attrition;
+            
+            hoursLostEl.textContent = `-${new Intl.NumberFormat('en-US').format(data.capacity_change.hours_lost_attrition.toFixed(0))} hrs`;
+            hoursGainedEl.textContent = `+${new Intl.NumberFormat('en-US').format(data.capacity_change.hours_gained_onboard.toFixed(0))} hrs`;
+            netChangeEl.textContent = `${netChange > 0 ? '+' : ''}${new Intl.NumberFormat('en-US').format(netChange.toFixed(0))} hrs`;
+            if (netChange < 0) {
+                netChangeEl.classList.add('text-[#FF6B6B]');
+                netChangeEl.classList.remove('text-gray-800');
+            } else {
+                 netChangeEl.classList.add('text-[#06D6A0]');
+                 netChangeEl.classList.remove('text-gray-800');
+            }
+
+            document.getElementById('totalHoursFY2021').textContent = new Intl.NumberFormat('en-US').format(data.yearly_kpis[0].Hours.toFixed(0)) + ' hrs';
+            document.getElementById('totalHoursFY2022').textContent = new Intl.NumberFormat('en-US').format(data.yearly_kpis[1].Hours.toFixed(0)) + ' hrs';
+
+            // Calculate new KPIs
+            const totalGPsFY2021 = data.gp_status_summary.attrition + data.gp_status_summary.consistently_active + data.gp_status_summary.other_sporadic;
+            const totalGPsFY2022 = data.gp_status_summary.new_onboard + data.gp_status_summary.consistently_active + data.gp_status_summary.other_sporadic;
+            const avgBillingsPerGP_FY2021 = data.total_billings.fy2021 / totalGPsFY2021;
+            const avgBillingsPerGP_FY2022 = data.total_billings.fy2022 / totalGPsFY2022;
+            const avgVisitsPerGP_FY2021 = data.yearly_kpis[0].Visits / totalGPsFY2021;
+            const avgVisitsPerGP_FY2022 = data.yearly_kpis[1].Visits / totalGPsFY2022;
+            const gpAttritionRate = (data.gp_status_summary.attrition / totalGPsFY2021) * 100;
+            const netGPCountChangeValue = totalGPsFY2022 - totalGPsFY2021;
+
+
+            // Display new KPIs
+            document.getElementById('totalGPsFY2021').textContent = totalGPsFY2021;
+            document.getElementById('totalGPsFY2022').textContent = totalGPsFY2022;
+            document.getElementById('avgBillingsPerGP2022').textContent = '$' + avgBillingsPerGP_FY2022.toFixed(2);
+            document.getElementById('avgBillingsPerGP2021').textContent = 'vs. $' + avgBillingsPerGP_FY2021.toFixed(2) + ' (FY20/21)';
+            document.getElementById('avgVisitsPerGP2022').textContent = avgVisitsPerGP_FY2022.toFixed(2);
+            document.getElementById('avgVisitsPerGP2021').textContent = 'vs. ' + avgVisitsPerGP_FY2021.toFixed(2) + ' (FY20/21)';
+            document.getElementById('gpAttritionRate').textContent = gpAttritionRate.toFixed(2) + '%';
+            document.getElementById('totalVisitsFY2022').textContent = new Intl.NumberFormat('en-US').format(data.yearly_kpis[1].Visits.toFixed(0));
+            document.getElementById('totalVisitsFY2021').textContent = 'vs. ' + new Intl.NumberFormat('en-US').format(data.yearly_kpis[0].Visits.toFixed(0)) + ' (FY20/21)';
+            document.getElementById('totalHoursFY2022Top').textContent = new Intl.NumberFormat('en-US').format(data.yearly_kpis[1].Hours.toFixed(0)) + ' hrs';
+            document.getElementById('totalHoursFY2021Top').textContent = 'vs. ' + new Intl.NumberFormat('en-US').format(data.yearly_kpis[0].Hours.toFixed(0)) + ' hrs (FY20/21)';
+            document.getElementById('netGPCountChange').textContent = (netGPCountChangeValue > 0 ? '+' : '') + netGPCountChangeValue;
+            if (netGPCountChangeValue < 0) {
+                document.getElementById('netGPCountChange').classList.add('text-[#FF6B6B]');
+            } else if (netGPCountChangeValue > 0) {
+                document.getElementById('netGPCountChange').classList.add('text-[#06D6A0]');
+            } else {
+                document.getElementById('netGPCountChange').classList.add('text-gray-800');
+            }
+
+
+            // GP Status Donut Chart
+            new Chart(document.getElementById('gpStatusDonutChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Attrition', 'New Onboard', 'Consistently Active', 'Other/Sporadic'],
+                    datasets: [{
+                        data: [
+                            data.gp_status_summary.attrition,
+                            data.gp_status_summary.new_onboard,
+                            data.gp_status_summary.consistently_active,
+                            data.gp_status_summary.other_sporadic
+                        ],
+                        backgroundColor: [
+                            chartColors.red,
+                            chartColors.green,
+                            chartColors.blue,
+                            chartColors.yellow
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: chartColors.darkBlue,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += new Intl.NumberFormat('en-US').format(context.parsed) + ' GPs';
+                                    }
+                                    return label;
+                                }
+                            },
+                            backgroundColor: 'rgba(7, 59, 76, 0.9)',
+                            titleFont: { size: 16 },
+                            bodyFont: { size: 14 },
+                            padding: 12,
+                            cornerRadius: 6,
+                            boxPadding: 4,
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('gpAttritionCount').textContent = data.gp_status_summary.attrition;
+            document.getElementById('gpOnboardCount').textContent = data.gp_status_summary.new_onboard;
+            document.getElementById('gpActiveCount').textContent = data.gp_status_summary.consistently_active;
+            document.getElementById('gpOtherCount').textContent = data.gp_status_summary.other_sporadic;
+
+        });
+    </script>
+</body>
+</html>
